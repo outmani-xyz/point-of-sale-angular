@@ -1,0 +1,262 @@
+<div class="container max-width pos">
+  <div class="row menu">
+    <div class="col-md-6">
+      <h3><i class="glyphicon glyphicon-user"></i> User name</h3>
+    </div>
+    <div class="col-md-6">
+      <h3 class="menu-title">Pointe De Vente 1</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-6 form-group">
+            <form (ngSubmit)='onSearch()' [formGroup]="frmRemise">
+              <input class="form-control" placeholder="Search" />
+            </form>
+          </div>
+        </div>
+        <div class="row pos-products">
+          <div class="pos-products-group">
+            <div class="pos-product" *ngFor="let item of Menu" (click)="onAddToOrder(item.$key)">
+              <img src="{{ item.imageUrl }}" class="img-responsive center-block">
+
+            </div>
+          </div>
+          <!--div class="pos-products-group">
+            <div class="pos-product">
+              <img src="assets/images/thumbnail.jpg" class="img-responsive center-block">
+            </div>
+          </div-->
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="container-fluid">
+        <div class="row">
+          <ul class="list-group menu-list">
+            <li class="list-group-item" *ngFor="let item of orders" (click)="onMinus(item.$key)">
+              <div class="container-fluid">
+                <div class="col-md-5">{{ item.name }}</div>
+                <div class="col-md-3">{{ item.price }}$x{{ item.qty }}</div>
+                <div class="col-md-3">{{item.qty *item.price}}
+                  <button class="btn btn-danger btn-xs" (click)="onRemoveOrder(item.$key)">
+                    <span class="glyphicon glyphicon-trash"></span>
+                  </button></div>
+                <div class="col-md-12">
+                  <!--button class="btn btn-success btn-xs" (click)="onAdd(item.$key)">
+                    <span class="glyphicon glyphicon-plus"></span>
+                  </button>
+                  <button class="btn btn-warning btn-xs"  (click)="onMinus(item.$key)">
+                    <span class="glyphicon glyphicon-minus"></span>
+                  </button>
+                  <button class="btn btn-danger btn-xs" (click)="onRemoveOrder(item.$key)">
+                    <span class="glyphicon glyphicon-trash"></span>
+                  </button-->
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-remise">
+            <div class="col-md-6">
+              <p>Remise</p>
+            </div>
+            <div class="col-md-6">
+              <p class="text-right">{{ remise }}$</p>
+            </div>
+          </div>
+          <div class="col-md-12 col-tva">
+            <div class="col-md-6">
+              <p>TVA (20%)</p>
+            </div>
+            <div class="col-md-6">
+              <p class="text-right">{{ priceTva }}$</p>
+            </div>
+          </div>
+          <div class="col-md-12 col-total">
+            <div class="col-md-6">
+              <p>Total</p>
+            </div>
+            <div class="col-md-6">
+              <p class="text-right">{{ totalTva }}$</p>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <button class="btn pos-btn-valide btn-success col-md-6 pull-right" (click)="onCheckout()">
+              <i class="glyphicon glyphicon-check"></i>
+              <strong>Valid</strong>
+              </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="pos-btn-group">
+        <button class="btn-pos btn" *ngFor='let cat of categories' (click)="getMenuOfCategory(cat)">{{ cat }}</button>
+      </div>
+    </div>
+    <div class="col-md-4">
+
+      <div id="openModal" class="modalDialog">
+        <div>
+          <a href="#close" title="Close" class="close">X</a>
+          <div class="col-mdd-12">
+            <form (ngSubmit)='onRemise()' [formGroup]="frmRemise" class="container-fluid">
+              <div class="col-md-10">
+                <input type="number" class="form-control" formControlName="remiseValue" min="0">
+              </div>
+              <div class="col-md-2">
+                <button type="submit" [disabled]="!frmRemise.valid" class="btn btn-success">
+                <i class="glyphicon glyphicon-check"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <button class="btn pos-btn-save btn-warning"><i class="glyphicon glyphicon-floppy-disk"></i>Enregistrers</button>
+      <button class="btn pos-btn-annule btn-danger" (click)="onClearOrders()"><i class="glyphicon glyphicon-ban-circle"></i>Annuler</button>
+      <button class="btn pos-btn-remise btn-primary"><a href="#openModal"><strong>% </strong>Remise</a></button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+         <div class="panel-heading">
+          <p>{{currentDate}}</p>
+        </div>
+        <div class="panel-body">
+
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <td>Name</td>
+                <td>Quantity</td>
+                <td>Price</td>
+                <td>Total</td>
+                <td></td>
+              </tr>
+            </thead>
+            <tbody *ngIf="_orderService.GetOrderCount()>0">
+
+              <tr *ngFor="let item of orders">
+                <td>
+                  {{item.name}}
+                </td>
+                <td>
+                  <span class="badge badge-left">{{item.qty}}</span>
+                </td>
+                <td>
+                  <span class="label label-success">{{item.price}}</span>
+                </td>
+                <td>
+                  <span class="label label-primary">{{item.qty *item.price}}</span>
+                </td>
+                <td>
+                  <button class="btn btn-success btn-xs" (click)="onAdd(item.$key)">
+                    <span class="glyphicon glyphicon-plus"></span>
+                  </button>
+                  <button class="btn btn-warning btn-xs" (click)="onMinus(item.$key)">
+                    <span class="glyphicon glyphicon-minus"></span>
+                  </button>
+                  <button class="btn btn-danger btn-xs" (click)="onRemoveOrder(item.$key)">
+                    <span class="glyphicon glyphicon-trash"></span>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td> <span class="label label-primary">{{_orderService.GetTotalOrderPrice()}}</span></td>
+              </tr>
+              <tr>
+                <button class="btn btn-danger" (click)="onClearOrders()">Clear Orders</button> |
+                <button class="btn btn-primary" (click)="onCheckout()">Checkout</button>
+              </tr>
+
+            </tbody>
+          </table>
+
+          <div class="container" *ngIf="_orderService.GetOrderCount()<1">
+            <h4>No order</h4>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="col-md-6">
+      <tabset>
+        <tab heading="Burgers">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div class="btn-group" *ngFor="let item of burgerMenu">
+                <button style="margin: 10px;" type="button" class="btn btn-primary" (click)="onAddToOrder(item.$key)">
+                    {{item.name}}
+                  </button>
+              </div>
+            </div>
+          </div>
+
+        </tab>
+        <tab heading="Chicken">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div class="btn-group" *ngFor="let item of chickenMenu">
+                <button style="margin: 10px;" type="button" class="btn btn-primary" (click)="onAddToOrder(item.$key)">
+                  {{item.name}}
+                </button>
+              </div>
+            </div>
+          </div>
+
+
+        </tab>
+        <tab heading="Desserts">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div class="btn-group" *ngFor="let item of dessertMenu">
+                <button style="margin: 10px;" type="button" class="btn btn-primary" (click)="onAddToOrder(item.$key)">
+                  {{item.name}}
+                </button>
+              </div>
+            </div>
+          </div>
+
+
+        </tab>
+      </tabset>
+
+
+
+    </div>
+  </div-->
